@@ -23,7 +23,44 @@ public class Database {
     private PreparedStatement InsertApAm;
     private PreparedStatement InsertPrAm;
 
+    // SELECTS
+    private PreparedStatement SelectProperty;
+    private PreparedStatement SelectApartment;
+    private PreparedStatement SelectLease;
+    private PreparedStatement SelectTenant;
+    private PreparedStatement SelectRents;
+    private PreparedStatement SelectVisited;
+    private PreparedStatement SelectPerspective;
+    private PreparedStatement SelectRentPayment;
+    private PreparedStatement SelectAmmPayment;
+    private PreparedStatement SelectApAm;
+    private PreparedStatement SelectPrAm;
 
+    // UPDATE
+    private PreparedStatement UpdateProperty;
+    private PreparedStatement UpdateApartment;
+    private PreparedStatement UpdateLease;
+    private PreparedStatement UpdateTenant;
+    private PreparedStatement UpdateRents;
+    private PreparedStatement UpdateVisited;
+    private PreparedStatement UpdatePerspective;
+    private PreparedStatement UpdateRentPayment;
+    private PreparedStatement UpdateAmmPayment;
+    private PreparedStatement UpdateApAm;
+    private PreparedStatement UpdatePrAm;
+
+    // DELETES
+    private PreparedStatement DeleteProperty;
+    private PreparedStatement DeleteApartment;
+    private PreparedStatement DeleteLease;
+    private PreparedStatement DeleteTenant;
+    private PreparedStatement DeleteRents;
+    private PreparedStatement DeleteVisited;
+    private PreparedStatement DeletePerspective;
+    private PreparedStatement DeleteRentPayment;
+    private PreparedStatement DeleteAmmPayment;
+    private PreparedStatement DeleteApAm;
+    private PreparedStatement DeletePrAm;
 
 
 
@@ -70,19 +107,23 @@ public class Database {
 
             //PROPERTY
             db.InsertProperty = db.mConnection.prepareStatement("INSERT INTO Properties VALUES (?, ?, ?)");
+            db.SelectProperty = db.mConnection.prepareStatement("SELECT * FROM Properties");
             
             //APARTMENT
             db.InsertApartment = db.mConnection.prepareStatement("INSERT INTO Apartment VALUES (?, ?, ?, ?, ?, ?, ?");
-            
+            db.SelectApartment = db.mConnection.prepareStatement("SELECT * FROM Apartment");
+
             //LEASE
             db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (?, ?, ?, ?, ?, ?, ?)");
-            
+            db.SelectLease = db.mConnection.prepareStatement("SELECT * FROM Lease");
             //TENANT
             db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (?, ?, ?, ?)");
-            
+            db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant");  
+
             //RENTS
             db.InsertRents = db.mConnection.prepareStatement("INSERT INTO Rents VALUES (?, ?)");
             
+
             //VISITED
             db.InsertVisited = db.mConnection.prepareStatement("INSERT INTO Visited VALUES (?, ?, ?)");
 
@@ -196,7 +237,7 @@ public class Database {
     int insertTenant(int tenant_id, String name, String age, String social) {
         int count = 0;
         try {
-            InsertTenant.setString(1, tenant_id);
+            InsertTenant.setInt(1, tenant_id);
             InsertTenant.setString(2, name);
             InsertTenant.setString(3, age);
             InsertTenant.setString(4, social);
