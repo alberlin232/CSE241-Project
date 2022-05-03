@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Database {
@@ -36,6 +37,9 @@ public class Database {
     private PreparedStatement SelectAmmPayment;
     private PreparedStatement SelectApAm;
     private PreparedStatement SelectPrAm;
+
+
+    private PreparedStatement SelectAppNums;
 
     // UPDATE
     private PreparedStatement UpdateProperty;
@@ -113,6 +117,7 @@ public class Database {
             //APARTMENT
             db.InsertApartment = db.mConnection.prepareStatement("INSERT INTO Apartments VALUES (?, ?, ?, ?, ?, ?, ?)");
             db.SelectApartment = db.mConnection.prepareStatement("SELECT * FROM Apartments");
+            db.SelectAppNums = db.mConnection.prepareStatement("SELECT * FROM Apartments WHERE address = ?");
 
             //LEASE
             db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)");
@@ -340,5 +345,20 @@ public class Database {
             e.printStackTrace();
         }
         return count;
+    }
+
+
+    ArrayList<Apartment> SelectAppNums(String address) {
+        ArrayList<Apartment> res = new ArrayList<Apartment>();
+        try {
+            SelectAppNums.setString(1, address);
+            ResultSet rs = SelectAppNums.executeQuery();
+            while (rs.next()) {
+                res.add(new Apartment(rs.getInt("app_num"), rs.getString("address"), rs.getInt("sq_foot"), rs.getInt("bedroom"), rs.getInt("bathroom"), rs.getInt("rent"), rs.getInt("pet")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

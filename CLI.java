@@ -2,6 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 public class CLI {
@@ -32,8 +36,29 @@ public class CLI {
                 //NUMA MANAGER
                 System.out.println("You have selected the NUMA Manager Interface");
                 action = numa_interface(in);
+                if (action == 'I' || action == 'i') {
+                    String address = getString(in, "Enter the address:");
+                    int building_number = getInt(in, "Enter the building number:");
+                    String building_name = getString(in, "Enter the building name:");
+                    db.InsertProperty(address, building_number, building_name);
+                }
                 if (action == 'G' || action == 'g') {
-                    
+                    String address = getString(in, "Please Enter the Address:");
+                    int num = getInt(in, "Please Enter the number of apartments that you want to generate:");
+                    int MAX_SQ_FOOT = getInt(in, "Please enter the max SQ_FOOT:");
+                    int MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT:");
+                    while (true) {
+                        if (MIN_SQ_FOOT > MAX_SQ_FOOT) {
+                            System.out.println("The min SQ_FOOT must be less than the max SQ_FOOT");
+                            MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT: ");
+                        } else {
+                            break;
+                        }
+                    }
+                    int MAX_BEDROOM = getInt(in, "Please enter the max number of bedrooms: ");
+                    int MAX_BATHROOM = getInt(in, "Please enter the max number of bathrooms: ");
+                    generateRandomApartments(db, address, num, MAX_SQ_FOOT, MIN_SQ_FOOT, MAX_BEDROOM, MAX_BATHROOM);
+                    System.out.println("Sick! All the apartments have been generated!");
                 }
             } else {
                 System.out.println("Invalid Command");
@@ -106,7 +131,7 @@ public class CLI {
         while (true) {
             System.out.println("Select which interface you want to use:");
             System.out.println("    [I] Insert Property");
-            System.out.println("    [G] Generate Properties");
+            System.out.println("    [G] Generate Apartments");
             System.out.println("    [q] Quit");
             System.out.println("    [?] Print Help Menu");
 
@@ -138,8 +163,18 @@ public class CLI {
         for (int i = 0; i < ApAms.length; i++) {
             map.put(ApAms[i], (int) Math.random() * 100);
         }
+
+        ArrayList<Apartment> nums = db.SelectAppNums(address);
+        int[] app_nums = new int[nums.size() + num];
+        int j = 0;
+        while(j < nums.size()) {
+            app_nums[j] = nums.get(j).app_num;
+            j++;
+        }
+        
         for (int i = 0; i < num; i++) {
-            app_num = i;
+            app_num = findSmallestMissing(app_nums);
+            app_nums[j+i] = app_num;
             sq_foot = (int) (Math.random() * (MAX_SQ_FOOT - MIN_SQ_FOOT) + MIN_SQ_FOOT);
             bedroom = (int) (Math.random() * MAX_BEDROOM);
             bathroom = (int) (Math.random() * MAX_BEDROOM);
@@ -152,6 +187,21 @@ public class CLI {
 
             rand = (int) (Math.random() * PrAms.length);
             db.InsertPrAm(address, PrAms[rand], (int) map.get(PrAms[rand]));
+        }
+    }
+
+    public static int findSmallestMissing(int[] nums){
+        // use a range constructor to initialize the set from array elements
+        Set<Integer> distinct = Arrays.stream(nums).boxed().collect(Collectors.toSet());
+ 
+        // return first smallest missing positive number from the set
+        int index = 1;
+        while (true)
+        {
+            if (!distinct.contains(index)) {
+                return index;
+            }
+            index++;
         }
     }
 }
