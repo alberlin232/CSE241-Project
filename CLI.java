@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 
 
 public class CLI {
@@ -125,8 +126,8 @@ public class CLI {
         }
     }
 
-    private void generateRandomApartments(String address, int num, int MAX_SQ_FOOT, int MIN_SQ_FOOT, int MAX_BEDROOM, int MAX_BATHROOM) {
-        int = app_num, sq_foot, bedroom, bathroom, rent, pet, rand;
+    private static void generateRandomApartments(Database db, String address, int num, int MAX_SQ_FOOT, int MIN_SQ_FOOT, int MAX_BEDROOM, int MAX_BATHROOM) {
+        int app_num, sq_foot, bedroom, bathroom, rent, pet, rand;
         String[] PrAms = {"Pool", "Gym", "Laundry,", "Parking", "Elevator"};
         String[] ApAms = {"Your Mom", "Hot Tub", "Petting Zoo", "Heated Floor", "DeezNuts"};
 
@@ -142,15 +143,15 @@ public class CLI {
             sq_foot = (int) (Math.random() * (MAX_SQ_FOOT - MIN_SQ_FOOT) + MIN_SQ_FOOT);
             bedroom = (int) (Math.random() * MAX_BEDROOM);
             bathroom = (int) (Math.random() * MAX_BEDROOM);
-            rent = (int) (Math.random() * sq_foot * bedroom * bathroom;
+            rent = (int) (Math.random() * sq_foot * bedroom * bathroom);
             pet = Math.random() < 0.8 ? 0 : 1;
-            db.InsertApartment(address, app_num, sq_foot, bedroom, bathroom, rent, pet)
+            db.InsertApartment(app_num, address, sq_foot, bedroom, bathroom, rent, pet);
 
             rand = (int) (Math.random() * ApAms.length);
-            db.insertApAm(app_num, address, ApAms[rand], map.get(ApAms[rand]));
+            db.InsertApAm(app_num, address, ApAms[rand], (int) map.get(ApAms[rand]));
 
             rand = (int) (Math.random() * PrAms.length);
-            db.insertPrAm(app_num, address, PrAms[rand], map.get(PrAms[rand]));
+            db.InsertPrAm(address, PrAms[rand], (int) map.get(PrAms[rand]));
         }
     }
 }

@@ -3,6 +3,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class Database {
     /**
@@ -110,14 +111,15 @@ public class Database {
             db.SelectProperty = db.mConnection.prepareStatement("SELECT * FROM Properties");
             
             //APARTMENT
-            db.InsertApartment = db.mConnection.prepareStatement("INSERT INTO Apartment VALUES (?, ?, ?, ?, ?, ?, ?");
-            db.SelectApartment = db.mConnection.prepareStatement("SELECT * FROM Apartment");
+            db.InsertApartment = db.mConnection.prepareStatement("INSERT INTO Apartments VALUES (?, ?, ?, ?, ?, ?, ?)");
+            db.SelectApartment = db.mConnection.prepareStatement("SELECT * FROM Apartments");
 
             //LEASE
-            db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (?, ?, ?, ?, ?, ?, ?)");
+            db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)");
             db.SelectLease = db.mConnection.prepareStatement("SELECT * FROM Lease");
+            
             //TENANT
-            db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (?, ?, ?, ?)");
+            db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (DEFAULT, ?, ?, ?)");
             db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant");  
 
             //RENTS
@@ -128,19 +130,19 @@ public class Database {
             db.InsertVisited = db.mConnection.prepareStatement("INSERT INTO Visited VALUES (?, ?, ?)");
 
             //PERSPECTIVE
-            db.InsertPerspective = db.mConnection.prepareStatement("INSERT INTO Perspective VALUES (?, ?, ?, ?)");
+            db.InsertPerspective = db.mConnection.prepareStatement("INSERT INTO Perspective VALUES (DEFAULT, ?, ?)");
 
             //RENT PAYMENT
             db.InsertRentPayment = db.mConnection.prepareStatement("INSERT INTO Rent_Payment VALUES (?, ?, ?, ?, ?)");
+ 
+            //PROPERTY AMENITIES
+            db.InsertPrAm = db.mConnection.prepareStatement("INSERT INTO Prop_Amenities VALUES (DEFAULT, ?, ?, ?)");
+            
+            //APARTMENT AMENITIES
+            db.InsertApAm = db.mConnection.prepareStatement("INSERT INTO App_Amenities VALUES (?, ?, ?)");
 
             //AMENITIES PAYMENT
             db.InsertAmmPayment = db.mConnection.prepareStatement("INSERT INTO Amm_Payment VALUES (?, ?, ?, ?, ?, ?)");
-
-            //APARTMENT AMENITIES
-            db.InsertApAm = db.mConnection.prepareStatement("INSERT INTO App_Amenities VALUES (?, ?, ?, ?)");
-
-            //PROPERTY AMENITIES
-            db.InsertPrAm = db.mConnection.prepareStatement("INSERT INTO Prop_Amenities VALUES (?, ?, ?)");
 
 
 
@@ -186,7 +188,7 @@ public class Database {
      * @param building_name  The name of the property
      * @return returns the row count of the insert statement 
      */
-    int insertProperty(String address, int building_number, String building_name) {
+    int InsertProperty(String address, int building_number, String building_name) {
         int count = 0;
         try {
             InsertProperty.setString(1, address);
@@ -200,7 +202,7 @@ public class Database {
     }
 
 
-    int insertApartment(int app_num, String address, int sq_foot, int bedroom, int bathroom, int rent, int pet) {
+    int InsertApartment(int app_num, String address, int sq_foot, int bedroom, int bathroom, int rent, int pet) {
         int count = 0;
         try {
             InsertApartment.setInt(1, app_num);
@@ -217,16 +219,15 @@ public class Database {
         return count;
     }
 
-    int InsertLease(int lease_id, int app_num, String address, int term_length, int rent, int deposit, int give_back) {
+    int InsertLease(int app_num, String address, int term_length, int rent, int deposit, int give_back) {
         int count = 0;
         try {
-            InsertLease.setInt(1, lease_id);
-            InsertLease.setInt(2, app_num);
-            InsertLease.setString(3, address);
-            InsertLease.setInt(4, term_length);
-            InsertLease.setInt(5, rent);
-            InsertLease.setInt(6, deposit);
-            InsertLease.setInt(7, give_back);
+            InsertLease.setInt(1, app_num);
+            InsertLease.setString(2, address);
+            InsertLease.setInt(3, term_length);
+            InsertLease.setInt(4, rent);
+            InsertLease.setInt(5, deposit);
+            InsertLease.setInt(6, give_back);
             count += InsertLease.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -234,13 +235,12 @@ public class Database {
         return count;
     }
 
-    int insertTenant(int tenant_id, String name, String age, String social) {
+    int insertTenant(String name, String age, String social) {
         int count = 0;
         try {
-            InsertTenant.setInt(1, tenant_id);
-            InsertTenant.setString(2, name);
-            InsertTenant.setString(3, age);
-            InsertTenant.setString(4, social);
+            InsertTenant.setString(1, name);
+            InsertTenant.setString(2, age);
+            InsertTenant.setString(3, social);
             count += InsertTenant.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -273,13 +273,11 @@ public class Database {
         return count;
     }
 
-    int insertPerspective(int persp_id, int age, int visited, int income) {
+    int insertPerspective(String name, int age) {
         int count = 0;
         try {
-            InsertPerspective.setInt(1, persp_id);
+            InsertPerspective.setString(1, name);
             InsertPerspective.setInt(2, age);
-            InsertPerspective.setInt(3, visited);
-            InsertPerspective.setInt(4, income);
             count += InsertPerspective.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -302,10 +300,10 @@ public class Database {
         return count;
     }
 
-    int insertAmmPayment(String address, int app_num, int tenant_id, String date, String method, int amount) {
+    int insertAmmPayment(int am_id, int app_num, int tenant_id, String date, String method, int amount) {
         int count = 0;
         try {
-            InsertAmmPayment.setString(1, address);
+            InsertAmmPayment.setInt(1, am_id);
             InsertAmmPayment.setInt(2, app_num);
             InsertAmmPayment.setInt(3, tenant_id);
             InsertAmmPayment.setString(4, date);
@@ -318,13 +316,12 @@ public class Database {
         return count;
     }
 
-    int insertApAm(int app_num, String address, String name, int price) {
+    int InsertApAm(int app_num, String address, String name, int price) {
         int count = 0;
         try {
             InsertApAm.setInt(1, app_num);
             InsertApAm.setString(2, address);
             InsertApAm.setString(3, name);
-            InsertApAm.setInt(4, price);
             count += InsertApAm.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -332,7 +329,7 @@ public class Database {
         return count;
     }
 
-    int insertPrAm(String address, String name, int price) {
+    int InsertPrAm(String address, String name, int price) {
         int count = 0;
         try {
             InsertPrAm.setString(1, address);
