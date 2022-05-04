@@ -27,7 +27,50 @@ public class CLI {
             } else if (action == 'q') {
                 break;
             } else if (action == 'p' || action == 'P'){
-                //PROPERTY MANAGER
+                while(true){
+                    //PROPERTY MANAGER
+                    action = prop_interface(in);
+                    if (action == 'T' || action == 't'){
+                        //Add Tenant
+                        String first_name = getString(in, "Enter first name:");
+                        String last_name = getString(in, "Enter last name:");
+                        int age = getInt(in, "Enter age:");
+                        int social = getInt(in, "Enter social security number:");
+                        db.InsertTenant(first_name, last_name, age, social);
+                    } else if (action == 'P' || action == 'p'){
+                        //Add Perspective
+                        String first_name = getString(in, "Enter first name:");
+                        String last_name = getString(in, "Enter last name:");
+                        int age = getInt(in, "Enter age:");
+                        db.InsertPerspective(first_name, last_name, age);
+                    } else if (action == 'V' || action == 'v'){
+                        //Add Visit
+                        
+
+                    } else if (action == 'L' || action == 'l'){
+                        //Add Lease
+                        action = lease_interface(in);
+                        if (action == 'C' || action == 'c'){
+                            //Create Lease
+                            int app_num = getInt(in, "Enter apartment number:");
+                            String address = getString(in, "Enter address:");
+                            int term_length = getInt(in, "Enter term length:");
+                            int rent = getInt(in, "Enter rent:");
+                            int deposit = getInt(in, "Enter deposit:");
+                            db.InsertLease(app_num, address, term_length, rent, deposit, 1);
+                        } else if (action == 'I' || action == 'i'){
+                            //
+                        } else if (action == 'L' || action == 'l'){
+                            System.out.println("Do you know the tenant's ID?");
+                        String getId = getString("Enter 'y' for yes or 'n' for no:");
+                        if (getId.equals("y")){
+                            String last_name = getString(in, "Enter Last Name:");
+                            SelectTenantByLastName(db, last_name);
+                        }
+                    } else {
+                        break;
+                    }
+                }
                 System.out.println("You have selected the Property Manager Interface");
             } else if (action == 't' || action == 'T') {
                 //TENANT
@@ -151,6 +194,67 @@ public class CLI {
         }
     }
 
+    static char prop_interface(BufferedReader in) {
+        
+        String actions = "TtPpVvLlq?";
+
+        while (true) {
+            System.out.println("Select which interface you want to use:");
+            System.out.println("    [T] Add Tenant");
+            System.out.println("    [P] Add Perspective");
+            System.out.println("    [V] Add Visit");
+            System.out.println("    [L] Add/Edit Lease");
+            System.out.println("    Tools");
+            System.out.println()
+            System.out.println("    [q] Quit");
+            System.out.println("    [?] Print Help Menu");
+
+            String action;
+            try {
+                action = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            if (action.length() != 1)
+                continue;
+            if (actions.contains(action)) {
+                return action.charAt(0);
+            }
+            System.out.println("Invalid Command");
+        }
+    }
+
+    static char lease_interface(BufferedReader in) {
+        String actions = "CcIiLlq?";
+
+        while (true) {
+            System.out.println("Select what you want to do with the lease:");
+            System.out.println("    [C] Create new Lease");
+            System.out.println("    [I] Add Tenant");
+            System.out.println("    [q] Quit");
+            System.out.println("    [?] Print Help Menu");
+
+            String action;
+            try {
+                action = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            if (action.length() != 1)
+                continue;
+            if (actions.contains(action)) {
+                return action.charAt(0);
+            }
+            System.out.println("Invalid Command");
+        }
+    }
+
+
+
+
+
     private static void generateRandomApartments(Database db, String address, int num, int MAX_SQ_FOOT, int MIN_SQ_FOOT, int MAX_BEDROOM, int MAX_BATHROOM) {
         int app_num, sq_foot, bedroom, bathroom, rent, pet, rand;
         String[] PrAms = {"Pool", "Gym", "Laundry,", "Parking", "Elevator"};
@@ -202,6 +306,20 @@ public class CLI {
                 return index;
             }
             index++;
+        }
+    }
+
+    private static void SelectTenantByLastName(Database db, String last_name) {
+        ArrayList<Tenant> tenants = db.SelectTenantByLastName(last_name);
+        for (Tenant tenant : tenants) {
+            System.out.println(tenant.toString());
+        }
+    }
+
+    private static void SelectAppNums(Database db, String address) {
+        ArrayList<Apartment> apartments = db.SelectAppNums(address);
+        for (Apartment apartment : apartments) {
+            System.out.println(apartment.toString());
         }
     }
 }

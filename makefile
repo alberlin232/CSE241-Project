@@ -9,7 +9,8 @@ JC = javac
 CLASSES = \
 		  CLI.java \
 		  Test.java \
-		  Database.java 
+		  Database.java \
+		  Apartment.java
 
 default: classes
 
