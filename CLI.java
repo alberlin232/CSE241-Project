@@ -26,9 +26,14 @@ public class CLI {
                 // Print the help menu
             } else if (action == 'q') {
                 break;
-            } else if (action == 'p' || action == 'P'){
+            } else if (action == 'p' || action == 'P') {
                 while(true){
+
+//========================================================================================================================
+
                     //PROPERTY MANAGER
+
+
                     action = prop_interface(in);
                     if (action == 'T' || action == 't'){
                         //Add Tenant
@@ -45,8 +50,13 @@ public class CLI {
                         db.InsertPerspective(first_name, last_name, age);
                     } else if (action == 'V' || action == 'v'){
                         //Add Visit
-                        
-
+                        int app_num = getInt(in, "Enter app_num:");
+                        String address = getString(in, "Enter address:");
+                        int num = getInt(in, "Enter how many perspectives visited:");
+                        for(int i = 0; i < num; i++){
+                            int persp_id = getInt(in, "Enter perspective ID:");
+                            db.InsertVisited(app_num, address, persp_id);
+                        }
                     } else if (action == 'L' || action == 'l'){
                         //Add Lease
                         action = lease_interface(in);
@@ -59,24 +69,50 @@ public class CLI {
                             int deposit = getInt(in, "Enter deposit:");
                             db.InsertLease(app_num, address, term_length, rent, deposit, 1);
                         } else if (action == 'I' || action == 'i'){
-                            //
-                        } else if (action == 'L' || action == 'l'){
-                            System.out.println("Do you know the tenant's ID?");
-                        String getId = getString("Enter 'y' for yes or 'n' for no:");
-                        if (getId.equals("y")){
-                            String last_name = getString(in, "Enter Last Name:");
-                            SelectTenantByLastName(db, last_name);
+                            ///Add Tenant to Lease
+                            int lease_id = getInt(in, "Enter lease ID:");
+                            int num = getInt(in, "Enter how many tenants you want to add:");
+                            for(int i = 0; i < num; i++){
+                                int tenant_id = getInt(in, "Enter tenant ID:");
+                                db.InsertRents(lease_id, tenant_id);
+                            }
+                        } else if (action == 'Q' || action == 'q') {
+                            break;
                         }
-                    } else {
+                    } else if (action == 'K' || action == 'k'){
+                        //Search Person
+                        String last_name = getString(in, "Enter last name:");
+                        SelectTenantByLastName(db, last_name);
+                    } else if (action == 'A' || action == 'a'){
+                        //Search Apartment
+                        String address = getString(in, "Enter address:");
+                        SelectAppNums(db, address);
+                    } else if (action == 'G' || action == 'g') {
+                        //Search Leases
+                        String address = getString(in, "Enter address:");
+                        SelectLeases(db, address);
+
+                    } else if (action == 'Q' || action == 'q'){
                         break;
-                    }
+                    } 
                 }
                 System.out.println("You have selected the Property Manager Interface");
             } else if (action == 't' || action == 'T') {
+
+//==========================================================================================================================
+
+
                 //TENANT
+
+
                 System.out.println("You have selected the Tenant Interface");
             } else if (action == 'n' || action == 'N') {
+
+//==========================================================================================================================
+
                 //NUMA MANAGER
+
+
                 System.out.println("You have selected the NUMA Manager Interface");
                 action = numa_interface(in);
                 if (action == 'I' || action == 'i') {
@@ -103,6 +139,7 @@ public class CLI {
                     generateRandomApartments(db, address, num, MAX_SQ_FOOT, MIN_SQ_FOOT, MAX_BEDROOM, MAX_BATHROOM);
                     System.out.println("Sick! All the apartments have been generated!");
                 }
+//==========================================================================================================================
             } else {
                 System.out.println("Invalid Command");
             }
@@ -196,16 +233,18 @@ public class CLI {
 
     static char prop_interface(BufferedReader in) {
         
-        String actions = "TtPpVvLlq?";
+        String actions = "TtPpVvLlKkAaGgq?";
 
         while (true) {
-            System.out.println("Select which interface you want to use:");
+            System.out.println("Select which service you want to use:");
             System.out.println("    [T] Add Tenant");
             System.out.println("    [P] Add Perspective");
             System.out.println("    [V] Add Visit");
             System.out.println("    [L] Add/Edit Lease");
-            System.out.println("    Tools");
-            System.out.println()
+            System.out.println("Search Tools:");
+            System.out.println("    [K] Search People");
+            System.out.println("    [A] Search Apartments");
+            System.out.println("    [G] Search Leases");
             System.out.println("    [q] Quit");
             System.out.println("    [?] Print Help Menu");
 
@@ -226,6 +265,32 @@ public class CLI {
     }
 
     static char lease_interface(BufferedReader in) {
+        String actions = "CcIiLlq?";
+
+        while (true) {
+            System.out.println("Select what you want to do with the lease:");
+            System.out.println("    [C] Create new Lease");
+            System.out.println("    [I] Add Tenant");
+            System.out.println("    [q] Quit");
+            System.out.println("    [?] Print Help Menu");
+
+            String action;
+            try {
+                action = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            if (action.length() != 1)
+                continue;
+            if (actions.contains(action)) {
+                return action.charAt(0);
+            }
+            System.out.println("Invalid Command");
+        }
+    }
+
+    static char tenant_interface(BufferedReader in) {
         String actions = "CcIiLlq?";
 
         while (true) {
@@ -320,6 +385,17 @@ public class CLI {
         ArrayList<Apartment> apartments = db.SelectAppNums(address);
         for (Apartment apartment : apartments) {
             System.out.println(apartment.toString());
+        }
+    }
+
+    private static void SelectLeases(Database db, String address) {
+        ArrayList<Lease> leases = db.SelectLeasesByAddress(address);
+        for (Lease lease : leases) {
+            ArrayList<Integer> tenants = db.SelectRents(lease.lease_id);
+            System.out.println(lease.toString());
+            for (Integer tenant : tenants) {
+                System.out.println("    " + db.SelectTenant(tenant).toString());
+            }
         }
     }
 }

@@ -41,6 +41,7 @@ public class Database {
 
     private PreparedStatement SelectAppNums;
     private PreparedStatement SelectTenantByLastName;
+    private PreparedStatement SelectLeasesByAddress;
 
     // UPDATE
     private PreparedStatement UpdateProperty;
@@ -123,15 +124,16 @@ public class Database {
             //LEASE
             db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)");
             db.SelectLease = db.mConnection.prepareStatement("SELECT * FROM Lease");
+            db.SelectLeasesByAddress = db.mConnection.prepareStatement("SELECT * FROM Lease WHERE address = ?");
             
             //TENANT
             db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (DEFAULT, ?, ?, ?, ?)");
-            db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant");
+            db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE tenant_id = ?");
             db.SelectTenantByLastName = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE last_name = ?"); 
 
             //RENTS
             db.InsertRents = db.mConnection.prepareStatement("INSERT INTO Rents VALUES (?, ?)");
-            
+            db.SelectRents = db.mConnection.prepareStatement("SELECT tenant_id FROM Rents WHERE lease_id = ?");
 
             //VISITED
             db.InsertVisited = db.mConnection.prepareStatement("INSERT INTO Visited VALUES (?, ?, ?)");
@@ -373,6 +375,48 @@ public class Database {
             ResultSet rs = SelectTenantByLastName.executeQuery();
             while (rs.next()) {
                 res.add(new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("age"), rs.getInt("social")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    ArrayList<Lease> SelectLeasesByAddress(String address) {
+        ArrayList<Lease> res = new ArrayList<Lease>();
+        try {
+            SelectLeasesByAddress.setString(1, address);
+            ResultSet rs = SelectLeasesByAddress.executeQuery();
+            while (rs.next()) {
+                res.add(new Lease(rs.getInt("lease_id"), rs.getInt("app_num"), rs.getString("address"), rs.getInt("term_length"), rs.getInt("rent"), rs.getInt("deposit"), rs.getInt("give_back")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Tenant SelectTenant(int tenant_id) {
+        Tenant res = null;
+        try {
+            SelectTenant.setInt(1, tenant_id);
+            ResultSet rs = SelectTenant.executeQuery();
+            if (rs.next()) {
+                res = new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("age"), rs.getInt("social"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    ArrayList<Integer> SelectRents(int lease_id) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        try {
+            SelectRents.setInt(1, lease_id);
+            ResultSet rs = SelectRents.executeQuery();
+            while (rs.next()) {
+                res.add(rs.getInt("tenant_id"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -19,6 +19,6 @@ public class Apartment {
     }
 
     public String toString() {
-        return "Apartment " + app_num + ": " + address + "($" + rent + ")\n";
+        return "Apartment " + app_num + ": " + address + "($" + rent + ")";
     }
 }
