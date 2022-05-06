@@ -7,7 +7,7 @@ public class Test {
             return;
         else System.out.println("Connected to database");
 
-        db.insertProperty("TEST", 445, "Best Building");
+        db.InsertProperty("TEST", 445, "Best Building");
         System.out.println("YES");
     }
     
