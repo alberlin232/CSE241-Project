@@ -44,31 +44,11 @@ public class Database {
     private PreparedStatement CalculatePayment;
     private PreparedStatement SelectLeaseID;
 
-    // UPDATE
-    private PreparedStatement UpdateProperty;
-    private PreparedStatement UpdateApartment;
-    private PreparedStatement UpdateLease;
-    private PreparedStatement UpdateTenant;
-    private PreparedStatement UpdateRents;
-    private PreparedStatement UpdateVisited;
-    private PreparedStatement UpdatePerspective;
-    private PreparedStatement UpdateRentPayment;
-    private PreparedStatement UpdateAmmPayment;
-    private PreparedStatement UpdateApAm;
-    private PreparedStatement UpdatePrAm;
-
-    // DELETES
-    private PreparedStatement DeleteProperty;
-    private PreparedStatement DeleteApartment;
-    private PreparedStatement DeleteLease;
-    private PreparedStatement DeleteTenant;
-    private PreparedStatement DeleteRents;
-    private PreparedStatement DeleteVisited;
-    private PreparedStatement DeletePerspective;
-    private PreparedStatement DeleteRentPayment;
-    private PreparedStatement DeleteAmmPayment;
-    private PreparedStatement DeleteApAm;
-    private PreparedStatement DeletePrAm;
+   // UPDATES
+    private PreparedStatement UpdateFirstName;
+    private PreparedStatement UpdateLastName;
+    private PreparedStatement UpdateAge;
+    private PreparedStatement UpdateSocial;
 
     /**
      * The Database constructor is private: we only create Database objects
@@ -130,6 +110,10 @@ public class Database {
             db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (DEFAULT, ?, ?, ?, ?)");
             db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE tenant_id = ?");
             db.SelectTenantByLastName = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE last_name = ?");
+            db.UpdateFirstName = db.mConnection.prepareStatement("UPDATE Tenant SET first_name = ? WHERE tenant_id = ?");
+            db.UpdateLastName = db.mConnection.prepareStatement("UPDATE Tenant SET last_name = ? WHERE tenant_id = ?");
+            db.UpdateAge = db.mConnection.prepareStatement("UPDATE Tenant SET age = ? WHERE tenant_id = ?");
+            db.UpdateSocial = db.mConnection.prepareStatement("UPDATE Tenant SET social_security = ? WHERE tenant_id = ?");
 
             // RENTS
             db.InsertRents = db.mConnection.prepareStatement("INSERT INTO Rents VALUES (?, ?)");
@@ -468,4 +452,54 @@ public class Database {
         }
         return res;
     }
+
+
+    int UpdateFirstName(int tenant_id, String first_name) {
+        int res = -1;
+        try {
+            UpdateFirstName.setString(1, first_name);
+            UpdateFirstName.setInt(2, tenant_id);
+            res = UpdateFirstName.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int UpdateLastName(int tenant_id, String last_name) {
+        int res = -1;
+        try {
+            UpdateLastName.setString(1, last_name);
+            UpdateLastName.setInt(2, tenant_id);
+            res = UpdateLastName.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int UpdateAge(int tenant_id, int age) {
+        int res = -1;
+        try {
+            UpdateAge.setInt(1, age);
+            UpdateAge.setInt(2, tenant_id);
+            res = UpdateAge.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int UpdateSocial(int tenant_id, int social) {
+        int res = -1;
+        try {
+            UpdateSocial.setInt(1, social);
+            UpdateSocial.setInt(2, tenant_id);
+            res = UpdateSocial.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    
 }
