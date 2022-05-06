@@ -1,10 +1,10 @@
 public class Tenant {
 
-    private int tenant_id;
-    private String first_name;
-    private String last_name;
-    private int age;
-    private int social;
+    public int tenant_id;
+    public String first_name;
+    public String last_name;
+    public int age;
+    public int social;
 
     public Tenant(int tenant_id, String first_name, String last_name, int age, int social) {
         this.tenant_id = tenant_id;

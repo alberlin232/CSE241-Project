@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-
 public class CLI {
     public static void main(String[] args) {
         Database db = Database.getDatabase();
@@ -27,13 +26,11 @@ public class CLI {
             } else if (action == 'q') {
                 break;
             } else if (action == 'p' || action == 'P') {
-                while(true){
+                while (true){
 
 //========================================================================================================================
 
                     //PROPERTY MANAGER
-
-
                     action = prop_interface(in);
                     if (action == 'T' || action == 't'){
                         //Add Tenant
@@ -79,6 +76,11 @@ public class CLI {
                         } else if (action == 'Q' || action == 'q') {
                             break;
                         }
+                    } else if (action == 'C' || action == 'c'){
+                        //Create Next Months Payments
+                        String address = getString(in, "Enter address:");
+                        String date = getString(in, "Enter date in YYYYMMDD format:");
+                        IncurPayment(db, address, date);
                     } else if (action == 'K' || action == 'k'){
                         //Search Person
                         String last_name = getString(in, "Enter last name:");
@@ -103,9 +105,36 @@ public class CLI {
 
 
                 //TENANT
-
-
                 System.out.println("You have selected the Tenant Interface");
+                int tenant_id = getInt(in, "Please select enter your unique ID given when signing your lease");
+                Tenant user = db.SelectTenant(tenant_id);
+                int due = db.CalculatePayment(tenant_id);
+                System.out.println("Hey there " + user.first_name + " " + user.last_name + "!");
+                System.out.println("Your payment due is $" + -1 * due + ".");
+
+
+                while(true){
+                    action = tenant_interface(in);
+                    if (action == 'Q' || action == 'q'){
+                        break;
+                    } else if (action == 'P' || action == 'p'){
+                        SelectLeaseID(db, tenant_id);
+                        int lease_id = getInt(in, "Enter which lease you want to pay:");
+                        String date = getString(in, "Enter current date in YYYYMMDD format:");
+                        String method = getString(in, "Enter payment method (cash, check, credit):");
+                        while(true){
+                            if (method.equals("cash") || method.equals("check") || method.equals("credit")){
+                                break;
+                            } else {
+                                System.out.println("Invalid payment method");
+                                method = getString(in, "Enter payment method (cash, check, credit):");
+                            }
+                        }
+                        int amount = getInt(in, "Enter amount:");
+                        System.out.println(lease_id + " " + tenant_id + " " + date + " " + method + " " + amount);
+                        db.InsertRentPayment(lease_id, tenant_id, date, method, amount);
+                    }
+                }
             } else if (action == 'n' || action == 'N') {
 
 //==========================================================================================================================
@@ -159,7 +188,6 @@ public class CLI {
         }
         return s;
     }
-    
 
     static int getInt(BufferedReader in, String message) {
         int i = -1;
@@ -177,7 +205,7 @@ public class CLI {
     }
 
     static char interface_menu(BufferedReader in) {
-        
+
         String actions = "pPtTnNq?";
 
         while (true) {
@@ -205,7 +233,7 @@ public class CLI {
     }
 
     static char numa_interface(BufferedReader in) {
-        
+
         String actions = "IiGgq?";
 
         while (true) {
@@ -232,8 +260,8 @@ public class CLI {
     }
 
     static char prop_interface(BufferedReader in) {
-        
-        String actions = "TtPpVvLlKkAaGgq?";
+
+        String actions = "TtPpVvLlKkCcAaGgq?";
 
         while (true) {
             System.out.println("Select which service you want to use:");
@@ -241,6 +269,7 @@ public class CLI {
             System.out.println("    [P] Add Perspective");
             System.out.println("    [V] Add Visit");
             System.out.println("    [L] Add/Edit Lease");
+            System.out.println("    [C] Initiate Payments for Lease");
             System.out.println("Search Tools:");
             System.out.println("    [K] Search People");
             System.out.println("    [A] Search Apartments");
@@ -291,12 +320,12 @@ public class CLI {
     }
 
     static char tenant_interface(BufferedReader in) {
-        String actions = "CcIiLlq?";
+        String actions = "PpQq?";
 
         while (true) {
             System.out.println("Select what you want to do with the lease:");
-            System.out.println("    [C] Create new Lease");
-            System.out.println("    [I] Add Tenant");
+            System.out.println("    [P] Make a Payment");
+            System.out.println("    [I] DO some fun stuff");
             System.out.println("    [q] Quit");
             System.out.println("    [?] Print Help Menu");
 
@@ -316,14 +345,11 @@ public class CLI {
         }
     }
 
-
-
-
-
-    private static void generateRandomApartments(Database db, String address, int num, int MAX_SQ_FOOT, int MIN_SQ_FOOT, int MAX_BEDROOM, int MAX_BATHROOM) {
+    private static void generateRandomApartments(Database db, String address, int num, int MAX_SQ_FOOT, int MIN_SQ_FOOT,
+            int MAX_BEDROOM, int MAX_BATHROOM) {
         int app_num, sq_foot, bedroom, bathroom, rent, pet, rand;
-        String[] PrAms = {"Pool", "Gym", "Laundry,", "Parking", "Elevator"};
-        String[] ApAms = {"Your Mom", "Hot Tub", "Petting Zoo", "Heated Floor", "DeezNuts"};
+        String[] PrAms = { "Pool", "Gym", "Laundry,", "Parking", "Elevator" };
+        String[] ApAms = { "Your Mom", "Hot Tub", "Petting Zoo", "Heated Floor", "DeezNuts" };
 
         HashMap<String, Integer> map = new HashMap<>();
         for (int i = 0; i < PrAms.length; i++) {
@@ -336,14 +362,14 @@ public class CLI {
         ArrayList<Apartment> nums = db.SelectAppNums(address);
         int[] app_nums = new int[nums.size() + num];
         int j = 0;
-        while(j < nums.size()) {
+        while (j < nums.size()) {
             app_nums[j] = nums.get(j).app_num;
             j++;
         }
-        
+
         for (int i = 0; i < num; i++) {
             app_num = findSmallestMissing(app_nums);
-            app_nums[j+i] = app_num;
+            app_nums[j + i] = app_num;
             sq_foot = (int) (Math.random() * (MAX_SQ_FOOT - MIN_SQ_FOOT) + MIN_SQ_FOOT);
             bedroom = (int) (Math.random() * MAX_BEDROOM);
             bathroom = (int) (Math.random() * MAX_BEDROOM);
@@ -359,14 +385,13 @@ public class CLI {
         }
     }
 
-    public static int findSmallestMissing(int[] nums){
+    public static int findSmallestMissing(int[] nums) {
         // use a range constructor to initialize the set from array elements
         Set<Integer> distinct = Arrays.stream(nums).boxed().collect(Collectors.toSet());
- 
+
         // return first smallest missing positive number from the set
         int index = 1;
-        while (true)
-        {
+        while (true) {
             if (!distinct.contains(index)) {
                 return index;
             }
@@ -396,6 +421,27 @@ public class CLI {
             for (Integer tenant : tenants) {
                 System.out.println("    " + db.SelectTenant(tenant).toString());
             }
+        }
+    }
+
+    private static void IncurPayment(Database db, String address, String date) {
+        ArrayList<Lease> leases = db.SelectLeasesByAddress(address);
+        for (Lease lease : leases) {
+            ArrayList<Integer> tenants = db.SelectRents(lease.lease_id);
+            System.out.println(lease.toString());
+            for (Integer tenant : tenants) {
+                // Add to the payment table
+                System.out.println(lease.lease_id + " " + tenant + " " + date + " " + lease.rent);
+                db.InsertRentPayment(lease.lease_id, tenant, date, "due", -(lease.rent));
+            }
+        }
+    }
+
+    private static void SelectLeaseID(Database db, int tenant_id) {
+        ArrayList<Integer> lease_ids = db.SelectLeaseID(tenant_id);
+        for (Integer lease_id : lease_ids) {
+            System.out.println("List of Leases:");
+            System.out.println("    " + db.SelectLease(lease_id).toString());
         }
     }
 }

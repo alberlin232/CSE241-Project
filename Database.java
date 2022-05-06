@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 public class Database {
     /**
-     * The connection to the database.  When there is no connection, it should
-     * be null.  Otherwise, there is a valid open connection
+     * The connection to the database. When there is no connection, it should
+     * be null. Otherwise, there is a valid open connection
      */
     private Connection mConnection;
 
@@ -38,10 +38,11 @@ public class Database {
     private PreparedStatement SelectApAm;
     private PreparedStatement SelectPrAm;
 
-
     private PreparedStatement SelectAppNums;
     private PreparedStatement SelectTenantByLastName;
     private PreparedStatement SelectLeasesByAddress;
+    private PreparedStatement CalculatePayment;
+    private PreparedStatement SelectLeaseID;
 
     // UPDATE
     private PreparedStatement UpdateProperty;
@@ -69,10 +70,8 @@ public class Database {
     private PreparedStatement DeleteApAm;
     private PreparedStatement DeletePrAm;
 
-
-
     /**
-     * The Database constructor is private: we only create Database objects 
+     * The Database constructor is private: we only create Database objects
      * through the getDatabase() method.
      */
     private Database() {
@@ -81,9 +80,9 @@ public class Database {
     /**
      * Get a fully-configured connection to the database
      * 
-     * @param port  The port on the database server to which connection requests
-     *              should be sent
-     * @param sid   The SID of the database 
+     * @param port The port on the database server to which connection requests
+     *             should be sent
+     * @param sid  The SID of the database
      * @return A Database object, or null if we cannot connect properly
      */
     static Database getDatabase() {
@@ -96,7 +95,8 @@ public class Database {
             // String user = in.nextLine();
             // System.out.print("Enter Oracle user password: ");
             // String pass = in.nextLine();
-            Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@edgar1.cse.lehigh.edu:1521:cse241", "alb323", "P822664504");
+            Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@edgar1.cse.lehigh.edu:1521:cse241",
+                    "alb323", "P822664504");
             if (conn == null) {
                 System.err.println("Error: DriverManager.getConnection() returned a null object");
                 return null;
@@ -108,52 +108,52 @@ public class Database {
             return null;
         }
 
-        // Attempt to create all of our prepared statements.  If any of these 
+        // Attempt to create all of our prepared statements. If any of these
         // fail, the whole getDatabase() call should fail
         try {
 
-            //PROPERTY
+            // PROPERTY
             db.InsertProperty = db.mConnection.prepareStatement("INSERT INTO Properties VALUES (?, ?, ?)");
             db.SelectProperty = db.mConnection.prepareStatement("SELECT * FROM Properties");
-            
-            //APARTMENT
+
+            // APARTMENT
             db.InsertApartment = db.mConnection.prepareStatement("INSERT INTO Apartments VALUES (?, ?, ?, ?, ?, ?, ?)");
             db.SelectApartment = db.mConnection.prepareStatement("SELECT * FROM Apartments");
             db.SelectAppNums = db.mConnection.prepareStatement("SELECT * FROM Apartments WHERE address = ?");
 
-            //LEASE
+            // LEASE
             db.InsertLease = db.mConnection.prepareStatement("INSERT INTO Lease VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)");
-            db.SelectLease = db.mConnection.prepareStatement("SELECT * FROM Lease");
+            db.SelectLease = db.mConnection.prepareStatement("SELECT * FROM Lease WHERE lease_id = ?");
             db.SelectLeasesByAddress = db.mConnection.prepareStatement("SELECT * FROM Lease WHERE address = ?");
-            
-            //TENANT
+
+            // TENANT
             db.InsertTenant = db.mConnection.prepareStatement("INSERT INTO Tenant VALUES (DEFAULT, ?, ?, ?, ?)");
             db.SelectTenant = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE tenant_id = ?");
-            db.SelectTenantByLastName = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE last_name = ?"); 
+            db.SelectTenantByLastName = db.mConnection.prepareStatement("SELECT * FROM Tenant WHERE last_name = ?");
 
-            //RENTS
+            // RENTS
             db.InsertRents = db.mConnection.prepareStatement("INSERT INTO Rents VALUES (?, ?)");
             db.SelectRents = db.mConnection.prepareStatement("SELECT tenant_id FROM Rents WHERE lease_id = ?");
+            db.SelectLeaseID = db.mConnection.prepareStatement("SELECT lease_id FROM Rents WHERE tenant_id = ?");
 
-            //VISITED
+            // VISITED
             db.InsertVisited = db.mConnection.prepareStatement("INSERT INTO Visited VALUES (?, ?, ?)");
 
-            //PERSPECTIVE
+            // PERSPECTIVE
             db.InsertPerspective = db.mConnection.prepareStatement("INSERT INTO Perspective VALUES (DEFAULT, ?, ?, ?)");
 
-            //RENT PAYMENT
+            // RENT PAYMENT
             db.InsertRentPayment = db.mConnection.prepareStatement("INSERT INTO Rent_Payment VALUES (?, ?, ?, ?, ?)");
- 
-            //PROPERTY AMENITIES
+            db.CalculatePayment = db.mConnection
+                    .prepareStatement("SELECT SUM(amount) FROM RENT_PAYMENT WHERE TENANT_ID = ? GROUP BY (TENANT_ID)");
+            // PROPERTY AMENITIES
             db.InsertPrAm = db.mConnection.prepareStatement("INSERT INTO Prop_Amenities VALUES (DEFAULT, ?, ?, ?)");
-            
-            //APARTMENT AMENITIES
+
+            // APARTMENT AMENITIES
             db.InsertApAm = db.mConnection.prepareStatement("INSERT INTO App_Amenities VALUES (?, ?, ?)");
 
-            //AMENITIES PAYMENT
+            // AMENITIES PAYMENT
             db.InsertAmmPayment = db.mConnection.prepareStatement("INSERT INTO Amm_Payment VALUES (?, ?, ?, ?, ?, ?)");
-
-
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -167,8 +167,8 @@ public class Database {
     /**
      * Close the current connection to the database, if one exists.
      * 
-     * NB: The connection will always be null after this call, even if an 
-     *     error occurred during the closing operation.
+     * NB: The connection will always be null after this call, even if an
+     * error occurred during the closing operation.
      * 
      * @return True if the connection was cleanly closed, false otherwise
      */
@@ -192,10 +192,10 @@ public class Database {
     /**
      * Insert a property into the database
      * 
-     * @param address  The address of the property
+     * @param address         The address of the property
      * @param building_number The street number of the property
-     * @param building_name  The name of the property
-     * @return returns the row count of the insert statement 
+     * @param building_name   The name of the property
+     * @return returns the row count of the insert statement
      */
     int InsertProperty(String address, int building_number, String building_name) {
         int count = 0;
@@ -209,7 +209,6 @@ public class Database {
         }
         return count;
     }
-
 
     int InsertApartment(int app_num, String address, int sq_foot, int bedroom, int bathroom, int rent, int pet) {
         int count = 0;
@@ -353,14 +352,14 @@ public class Database {
         return count;
     }
 
-
     ArrayList<Apartment> SelectAppNums(String address) {
         ArrayList<Apartment> res = new ArrayList<Apartment>();
         try {
             SelectAppNums.setString(1, address);
             ResultSet rs = SelectAppNums.executeQuery();
             while (rs.next()) {
-                res.add(new Apartment(rs.getInt("app_num"), rs.getString("address"), rs.getInt("sq_foot"), rs.getInt("bedroom"), rs.getInt("bathroom"), rs.getInt("rent"), rs.getInt("pet")));
+                res.add(new Apartment(rs.getInt("app_num"), rs.getString("address"), rs.getInt("sq_foot"),
+                        rs.getInt("bedroom"), rs.getInt("bathroom"), rs.getInt("rent"), rs.getInt("pet")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -374,7 +373,8 @@ public class Database {
             SelectTenantByLastName.setString(1, last_name);
             ResultSet rs = SelectTenantByLastName.executeQuery();
             while (rs.next()) {
-                res.add(new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("age"), rs.getInt("social")));
+                res.add(new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"),
+                        rs.getInt("age"), rs.getInt("social")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -388,7 +388,8 @@ public class Database {
             SelectLeasesByAddress.setString(1, address);
             ResultSet rs = SelectLeasesByAddress.executeQuery();
             while (rs.next()) {
-                res.add(new Lease(rs.getInt("lease_id"), rs.getInt("app_num"), rs.getString("address"), rs.getInt("term_length"), rs.getInt("rent"), rs.getInt("deposit"), rs.getInt("give_back")));
+                res.add(new Lease(rs.getInt("lease_id"), rs.getInt("app_num"), rs.getString("address"),
+                        rs.getInt("term_length"), rs.getInt("rent"), rs.getInt("deposit"), rs.getInt("give_back")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -402,7 +403,8 @@ public class Database {
             SelectTenant.setInt(1, tenant_id);
             ResultSet rs = SelectTenant.executeQuery();
             if (rs.next()) {
-                res = new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"), rs.getInt("age"), rs.getInt("social"));
+                res = new Tenant(rs.getInt("tenant_id"), rs.getString("first_name"), rs.getString("last_name"),
+                        rs.getInt("age"), rs.getInt("social"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -417,6 +419,49 @@ public class Database {
             ResultSet rs = SelectRents.executeQuery();
             while (rs.next()) {
                 res.add(rs.getInt("tenant_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    int CalculatePayment(int tenant_id) {
+        int res = 0;
+        try {
+            CalculatePayment.setInt(1, tenant_id);
+            ResultSet rs = CalculatePayment.executeQuery();
+            if (rs.next()) {
+                res = rs.getInt("SUM(AMOUNT)");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    ArrayList<Integer> SelectLeaseID(int tenant_id) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        try {
+            SelectLeaseID.setInt(1, tenant_id);
+            ResultSet rs = SelectLeaseID.executeQuery();
+            while (rs.next()) {
+                res.add(rs.getInt("lease_id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    Lease SelectLease(int lease_id) {
+        Lease res = null;
+        try {
+            SelectLease.setInt(1, lease_id);
+            ResultSet rs = SelectLease.executeQuery();
+            if (rs.next()) {
+                res = new Lease(rs.getInt("lease_id"), rs.getInt("app_num"), rs.getString("address"),
+                        rs.getInt("term_length"), rs.getInt("rent"), rs.getInt("deposit"), rs.getInt("give_back"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
