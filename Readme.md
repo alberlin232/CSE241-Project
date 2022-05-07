@@ -80,8 +80,60 @@ Select [R] to refresh the balance!
 
 Summary: This interface is the most extensive and most use full interface in the application. The primary goal of this interface is to be able to add tenants and perspective tenants, sign leases, record visits, and initiate monthly payments. 
 
+    [T] Add Tenant
+        - Add Tenant into the tenant table
+    [P] Add Prospective
+        - Add Prospective Tenant into per
+    [V] Add Visit
+        - Document that a prospective tenant has visited an apartment
+    [L] Add/Edit Lease
+        [C] Create new Lease
+            - Add a row to the lease table with a tenant and an apartment
+        [I] Add Tenant
+            - Put a tenant on the lease
+        [q] Quit
+            - Quit to the Property Manager 
+        [?] Print Help Menu
+    [C] Initiate Payments for Lease
+        - For a certain address incur the date inputs rents
+    Search Tools:
+    [K] Search People
+        - Search People by last name
+    [A] Search Apartments
+        - Search apartment by address
+    [G] Search Leases
+        - Search Leases by address
+    [q] Quit
+        - Quit to the Main Menu
+    [?] Print Help Menu
+
 
 
 ### [T] Tenant Interface 
 
-Summary: The tenant interface is primarily used to help the tenants pay for their rent 
+Summary: The tenant interface is primarily used to help the tenants pay for their rent
+
+    [P] Make a Payment
+        - Add a payment with a leaseId
+    [E] Edit Personal Data
+        [F] Edit First Name
+        [L] Edit Last Name
+        [A] Edit Age
+        [S] Edit social
+        [q] Quit
+        [?] Print Help Menu
+    [R] Refresh
+        - Re-prints name of tenant and amount due
+    [q] Quit
+    [?] Print Help Menu
+
+### [N] NUMA Manager
+
+Summary: The NUMA interface is used to create properties and apartments in those properties
+
+    [I] Insert Property
+        - Add a building to the system
+    [G] Generate Apartments
+        - Automatically make the number of apartments specified with the set of parameters specified
+    [q] Quit
+    [?] Print Help Menu
