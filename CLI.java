@@ -50,31 +50,33 @@ public class CLI {
                         int app_num = getInt(in, "Enter app_num:");
                         String address = getString(in, "Enter address:");
                         int num = getInt(in, "Enter how many perspectives visited:");
-                        for(int i = 0; i < num; i++){
+                        for (int i = 0; i < num; i++){
                             int persp_id = getInt(in, "Enter perspective ID:");
                             db.InsertVisited(app_num, address, persp_id);
                         }
                     } else if (action == 'L' || action == 'l'){
                         //Add Lease
-                        action = lease_interface(in);
-                        if (action == 'C' || action == 'c'){
-                            //Create Lease
-                            int app_num = getInt(in, "Enter apartment number:");
-                            String address = getString(in, "Enter address:");
-                            int term_length = getInt(in, "Enter term length:");
-                            int rent = getInt(in, "Enter rent:");
-                            int deposit = getInt(in, "Enter deposit:");
-                            db.InsertLease(app_num, address, term_length, rent, deposit, 1);
-                        } else if (action == 'I' || action == 'i'){
-                            ///Add Tenant to Lease
-                            int lease_id = getInt(in, "Enter lease ID:");
-                            int num = getInt(in, "Enter how many tenants you want to add:");
-                            for(int i = 0; i < num; i++){
-                                int tenant_id = getInt(in, "Enter tenant ID:");
-                                db.InsertRents(lease_id, tenant_id);
+                        while (true) {
+                            action = lease_interface(in);
+                            if (action == 'C' || action == 'c'){
+                                //Create Lease
+                                int app_num = getInt(in, "Enter apartment number:");
+                                String address = getString(in, "Enter address:");
+                                int term_length = getInt(in, "Enter term length:");
+                                int rent = getInt(in, "Enter rent:");
+                                int deposit = getInt(in, "Enter deposit:");
+                                System.out.print("LeaseID: " + db.InsertLease(app_num, address, term_length, rent, deposit, 1));
+                            } else if (action == 'I' || action == 'i'){
+                                ///Add Tenant to Lease
+                                int lease_id = getInt(in, "Enter lease ID:");
+                                int num = getInt(in, "Enter how many tenants you want to add:");
+                                for(int i = 0; i < num; i++){
+                                    int tenant_id = getInt(in, "Enter tenant ID:");
+                                    db.InsertRents(lease_id, tenant_id);
+                                }
+                            } else if (action == 'Q' || action == 'q') {
+                                break;
                             }
-                        } else if (action == 'Q' || action == 'q') {
-                            break;
                         }
                     } else if (action == 'C' || action == 'c'){
                         //Create Next Months Payments
@@ -106,12 +108,7 @@ public class CLI {
 
                 //TENANT
                 System.out.println("You have selected the Tenant Interface");
-                int tenant_id = getInt(in, "Please select enter your unique ID given when signing your lease");
-                Tenant user = db.SelectTenant(tenant_id);
-                int due = db.CalculatePayment(tenant_id);
-                System.out.println("Hey there " + user.first_name + " " + user.last_name + "!");
-                System.out.println("Your payment due is $" + -1 * due + ".");
-
+                int tenant_id = TenantIntro(db, in, -1);
 
                 while(true){
                     action = tenant_interface(in);
@@ -133,6 +130,29 @@ public class CLI {
                         int amount = getInt(in, "Enter amount:");
                         System.out.println(lease_id + " " + tenant_id + " " + date + " " + method + " " + amount);
                         db.InsertRentPayment(lease_id, tenant_id, date, method, amount);
+                    } else if (action == 'E' || action == 'e'){
+
+                        while (true) {
+                            action = person_interface(in);
+                            if (action == 'Q' || action == 'q'){
+                                break;
+                            } else if (action == 'F' || action == 'f'){
+                                String first_name = getString(in, "Enter first name:");
+                                db.UpdateFirstName(tenant_id, first_name);
+
+                            } else if (action == 'L' || action == 'l'){
+                                String last_name = getString(in, "Enter last name:");
+                                db.UpdateLastName(tenant_id, last_name);
+                            } else if (action == 'A' || action == 'a'){
+                                int age = getInt(in, "Enter age:");
+                                db.UpdateAge(tenant_id, age);
+                            } else if (action == 'S' || action == 's'){
+                                int social = getInt(in, "Enter social security number:");
+                                db.UpdateSocial(tenant_id, social);
+                            }
+                        }
+                    } else if (action == 'R' || action == 'r'){
+                        TenantIntro(db, in, tenant_id);
                     }
                 }
             } else if (action == 'n' || action == 'N') {
@@ -143,30 +163,33 @@ public class CLI {
 
 
                 System.out.println("You have selected the NUMA Manager Interface");
-                action = numa_interface(in);
-                if (action == 'I' || action == 'i') {
-                    String address = getString(in, "Enter the address:");
-                    int building_number = getInt(in, "Enter the building number:");
-                    String building_name = getString(in, "Enter the building name:");
-                    db.InsertProperty(address, building_number, building_name);
-                }
-                if (action == 'G' || action == 'g') {
-                    String address = getString(in, "Please Enter the Address:");
-                    int num = getInt(in, "Please Enter the number of apartments that you want to generate:");
-                    int MAX_SQ_FOOT = getInt(in, "Please enter the max SQ_FOOT:");
-                    int MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT:");
-                    while (true) {
-                        if (MIN_SQ_FOOT > MAX_SQ_FOOT) {
-                            System.out.println("The min SQ_FOOT must be less than the max SQ_FOOT");
-                            MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT: ");
-                        } else {
-                            break;
+                while (true) {
+                    action = numa_interface(in);
+                    if (action == 'Q' || action == 'q') {
+                        break;
+                    } else if (action == 'I' || action == 'i') {
+                        String address = getString(in, "Enter the address:");
+                        int building_number = getInt(in, "Enter the building number:");
+                        String building_name = getString(in, "Enter the building name:");
+                        db.InsertProperty(address, building_number, building_name);
+                    }else if (action == 'G' || action == 'g') {
+                        String address = getString(in, "Please Enter the Address:");
+                        int num = getInt(in, "Please Enter the number of apartments that you want to generate:");
+                        int MAX_SQ_FOOT = getInt(in, "Please enter the max SQ_FOOT:");
+                        int MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT:");
+                        while (true) {
+                            if (MIN_SQ_FOOT > MAX_SQ_FOOT) {
+                                System.out.println("The min SQ_FOOT must be less than the max SQ_FOOT");
+                                MIN_SQ_FOOT = getInt(in, "Please enter the min SQ_FOOT: ");
+                            } else {
+                                break;
+                            }
                         }
+                        int MAX_BEDROOM = getInt(in, "Please enter the max number of bedrooms: ");
+                        int MAX_BATHROOM = getInt(in, "Please enter the max number of bathrooms: ");
+                        generateRandomApartments(db, address, num, MAX_SQ_FOOT, MIN_SQ_FOOT, MAX_BEDROOM, MAX_BATHROOM);
+                        System.out.println("Sick! All the apartments have been generated!");
                     }
-                    int MAX_BEDROOM = getInt(in, "Please enter the max number of bedrooms: ");
-                    int MAX_BATHROOM = getInt(in, "Please enter the max number of bathrooms: ");
-                    generateRandomApartments(db, address, num, MAX_SQ_FOOT, MIN_SQ_FOOT, MAX_BEDROOM, MAX_BATHROOM);
-                    System.out.println("Sick! All the apartments have been generated!");
                 }
 //==========================================================================================================================
             } else {
@@ -320,12 +343,41 @@ public class CLI {
     }
 
     static char tenant_interface(BufferedReader in) {
-        String actions = "PpQq?";
+        String actions = "PpEeRrQq?";
 
         while (true) {
             System.out.println("Select what you want to do with the lease:");
             System.out.println("    [P] Make a Payment");
-            System.out.println("    [I] DO some fun stuff");
+            System.out.println("    [E] Edit Personal Data");
+            System.out.println("    [R] Refresh");
+            System.out.println("    [q] Quit");
+            System.out.println("    [?] Print Help Menu");
+
+            String action;
+            try {
+                action = in.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                continue;
+            }
+            if (action.length() != 1)
+                continue;
+            if (actions.contains(action)) {
+                return action.charAt(0);
+            }
+            System.out.println("Invalid Command");
+        }
+    }
+
+    static char person_interface(BufferedReader in) {
+        String actions = "FfLlAaSsQq?";
+
+        while (true) {
+            System.out.println("Select what you want to do with the lease:");
+            System.out.println("    [F] Edit First Name");
+            System.out.println("    [L] Edit Last Name");
+            System.out.println("    [A] Edit Age");
+            System.out.println("    [S] Edit social");
             System.out.println("    [q] Quit");
             System.out.println("    [?] Print Help Menu");
 
@@ -443,5 +495,17 @@ public class CLI {
             System.out.println("List of Leases:");
             System.out.println("    " + db.SelectLease(lease_id).toString());
         }
+    }
+
+
+    private static int TenantIntro(Database db, BufferedReader in, int tenant_id) {
+        if (tenant_id == -1) {
+            tenant_id = getInt(in, "Please select enter your unique ID given when signing your lease");
+        } 
+        Tenant user = db.SelectTenant(tenant_id);
+        int due = db.CalculatePayment(tenant_id);
+        System.out.println("Hey there " + user.first_name + " " + user.last_name + "!");
+        System.out.println("Your payment due is $" + -1 * due + ".");
+        return tenant_id;
     }
 }
