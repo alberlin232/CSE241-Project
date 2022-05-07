@@ -1,3 +1,7 @@
+import java.util.HashMap;
+import java.util.ArrayList;
+
+
 public class Test {
     
 
@@ -6,9 +10,8 @@ public class Test {
         if (db == null)
             return;
         else System.out.println("Connected to database");
-
-        db.insertProperty("TEST", 445, "Best Building");
         System.out.println("YES");
+        db.disconnect();
     }
     
 }

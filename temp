@@ -1,0 +1,113 @@
+
+
+-- Add example data to Properties table
+INSERT INTO Properties (address, buidling_num, buildin_name) VALUES ('456 Pine Street', 456, 'Pine Street Apartments');
+INSERT INTO Properties (address, buidling_num, buildin_name) VALUES ('789 Maple Street', 789, 'Maple Street Apartments');
+
+-- Add example data to Apartments table
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (1, '123 Main Street', 800, 2, 2, 2000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (2, '123 Main Street', 1000, 3, 3, 3000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (3, '123 Main Street', 1200, 4, 4, 4000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (4, '123 Main Street', 1600, 5, 5, 5000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (5, '123 Main Street', 2000, 6, 6, 6000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (6, '456 Pine Street', 800, 2, 2, 2000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (7, '456 Pine Street', 1000, 3, 3, 3000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (8, '456 Pine Street', 1200, 4, 4, 4000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (9, '456 Pine Street', 1600, 5, 5, 5000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (10, '456 Pine Street', 2000, 6, 6, 6000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (11, '789 Maple Street', 800, 2, 2, 2000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (12, '789 Maple Street', 1000, 3, 3, 3000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (13, '789 Maple Street', 1200, 4, 4, 4000, 0);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (14, '789 Maple Street', 1600, 5, 5, 5000, 1);
+INSERT INTO Apartments (app_num, address, sq_foot, bedroom, bathroom, rent, pet) VALUES (15, '789 Maple Street', 2000, 6, 6, 6000, 0);
+
+-- Add example data to Tenent table
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (1, 'John Doe', 20, 189145514);
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (2, 'Jane Doe', 21, 189145515);
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (3, 'Jack Doe', 22, 189145516);
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (4, 'Jill Doe', 23, 189145517);
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (5, 'Joe Doe', 24, 189145518);
+INSERT INTO Tenent (tenent_id, name, age, social) VALUES (6, 'Jenny Doe', 25, 189145519);
+
+
+
+-- Add example data to Lease tabls
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (1, 1, '123 Main Street', 12, 2000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (2, 2, '123 Main Street', 12, 3000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (3, 3, '123 Main Street', 12, 4000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (4, 4, '123 Main Street', 12, 5000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (5, 5, '123 Main Street', 12, 6000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (6, 6, '456 Pine Street', 12, 2000, 500, 0);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (7, 7, '456 Pine Street', 12, 3000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (8, 8, '456 Pine Street', 12, 4000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (9, 9, '456 Pine Street', 12, 5000, 500, 0);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (10, 10, '456 Pine Street', 12, 6000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (11, 11, '789 Maple Street', 12, 2000, 500, 0);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (12, 12, '789 Maple Street', 12, 3000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (13, 13, '789 Maple Street', 12, 4000, 500, 1);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (14, 14, '789 Maple Street', 12, 5000, 500, 0);
+INSERT INTO Lease (lease_id, app_num, address, term_length, rent, deposit, give_back) VALUES (15, 15, '789 Maple Street', 12, 6000, 500, 1);
+
+-- Add example data to Rents table
+INSERT INTO Rents (lease_id, tenent_id) VALUES (1, 1);
+INSERT INTO Rents (lease_id, tenent_id) VALUES (2, 1);
+INSERT INTO Rents (lease_id, tenent_id) VALUES (3, 3);
+INSERT INTO Rents (lease_id, tenent_id) VALUES (4, 4);
+INSERT INTO Rents (lease_id, tenent_id) VALUES (5, 5);
+INSERT INTO Rents (lease_id, tenent_id) VALUES (6, 6);
+
+
+-- Add example data to Rent_Payment table
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (1, 1, '2019-01-01', 'check', 2000);
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (2, 1, '2019-02-01', 'check', 3000);
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (3, 3, '2019-03-01', 'credit', 4000);
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (4, 4, '2019-04-01', 'credit', 5000);
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (5, 5, '2019-05-01', 'credit', 6000);
+INSERT INTO Rent_Payment (lease_id, tenent_id, date_, method, amount) VALUES (6, 6, '2019-06-01', 'check', 2000);
+
+-- Add example data to Prop_Amenities table
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (1, '123 Main Street', 'Pool', 10);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (2, '123 Main Street', 'Gym', 20);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (3, '123 Main Street', 'Laundry', 30);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (4, '123 Main Street', 'Parking', 50);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (5, '456 Pine Street', 'Pool', 40);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (6, '456 Pine Street', 'Gym', 30);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (7, '456 Pine Street', 'Laundry', 10);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (8, '456 Pine Street', 'Parking', 70);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (9, '789 Maple Street', 'Pool', 10);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (10, '789 Maple Street', 'Gym', 30);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (11, '789 Maple Street', 'Laundry', 40);
+INSERT INTO Prop_Amenities (id, address, name, price) VALUES (12, '789 Maple Street', 'Parking', 90);
+
+-- Add exmple data to App_Amenities table
+INSERT INTO App_Amenities (app_num, address, name) VALUES (1, '123 Main Street', 'Hot Tub');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (2, '123 Main Street', 'Petting Zoo');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (4, '123 Main Street', 'Heated Floor');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (5, '123 Main Street', 'Your Mom');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (6, '456 Pine Street', 'Massage Table');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (7, '456 Pine Street', 'Fake Sun');
+INSERT INTO App_Amenities (app_num, address, name) VALUES (8, '456 Pine Street', 'Deez Nutz');
+
+
+-- Add example data to Amm_Payment table
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (1, '123 Main Street', 1, '2019-01-01', 'check', 40);
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (2, '123 Main Street', 1, '2019-02-01', 'check', 50);
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (3, '123 Main Street', 3, '2019-03-01', 'credit', 60);
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (4, '123 Main Street', 4, '2019-04-01', 'credit', 70);
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (5, '123 Main Street', 5, '2019-05-01', 'credit', 80);
+INSERT INTO Amm_Payment (am_id, address, tenent_id, date_, method, amount) VALUES (6, '123 Main Street', 6, '2019-06-01', 'check', 40);
+
+-- Add example data to Perspective table 
+INSERT INTO Perspective (persp_id, name, age) VALUES (1, 'John Doe', 20);
+INSERT INTO Perspective (persp_id, name, age) VALUES (2, 'Jane Doe', 21);
+INSERT INTO Perspective (persp_id, name, age) VALUES (3, 'Jack Doe', 22);
+INSERT INTO Perspective (persp_id, name, age) VALUES (4, 'Jill Doe', 23);
+INSERT INTO Perspective (persp_id, name, age) VALUES (5, 'Joe Doe', 24);
+INSERT INTO Perspective (persp_id, name, age) VALUES (6, 'Jenny Doe', 25);
+
+-- Add example data to Visited table
+INSERT INTO Visited (app_num, address, persp_id) VALUES (1, '123 Main Street', 1);
+INSERT INTO Visited (app_num, address, persp_id) VALUES (2, '123 Main Street', 2);
+INSERT INTO Visited (app_num, address, persp_id) VALUES (3, '123 Main Street', 3);
+INSERT INTO Visited (app_num, address, persp_id) VALUES (4, '123 Main Street', 4);
+INSERT INTO Visited (app_num, address, persp_id) VALUES (5, '123 Main Street', 5);
